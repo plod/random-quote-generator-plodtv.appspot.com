@@ -1,0 +1,118 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Random Quote Machine</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
+    <script src="https://use.fontawesome.com/2ab403e75d.js"></script>
+
+  <style>
+    body, html {
+    margin: 0;
+    height: 100%;
+    }
+    body{
+        font-family: Oswald;
+        transition: background 1s;
+    }
+
+    section {
+    display: flex;
+    flex-direction: row;
+    height:100%;
+    }
+
+    article {
+    margin: auto;
+    width: 400px;
+    background-color: white;
+    border-radius: 20px 0 20px 20px;
+    padding: 10px;
+    box-shadow: 0 0 30px -10px #000;
+    }
+    h1{
+        font-size: 32px;
+        line-height: 36px;
+    }
+    h1:before, 
+    h1:after{
+        font-family: FontAwesome;
+        font-size: 120%;
+        opacity: 90%;
+    }
+    h1:before{
+        content: "\f10d";
+        margin-right: 10px;
+    }
+    h1:after{
+        content: "\f10e";
+        margin-left: 10px;
+    }
+    h2{
+        text-align: right;
+    }
+    nav{
+        display: flex;
+        justify-content: space-between;
+    }
+    .magicButton {
+        appearance: none;
+        box-shadow: none;
+        outline: none;
+        margin: 10px;
+        padding: 5px 5px;
+        border: none;
+        border-radius: 4px;
+        color: #fff;
+        font-family: Oswald;
+    }
+  </style>
+</head>
+<body>
+    <section>
+        <article><h1></h1><h2></h2><nav><button class="magicButton" id="tweet"><i class="fa fa-twitter"></i></button><button class="magicButton" id="newQuote">New Quote</button></nav></article>
+    </section>
+
+    <script>
+        function getRandomColor() {
+                var letters = '0123456789ABCDEF';
+                var color = '#';
+                for (var i = 0; i < 6; i++ ) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+        }
+        function getQuote(){
+             $.getJSON("//cors.io/?http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1&callback=", function(a) {
+                 if (a.length < 1){
+                    $('h1').html("<em>Problem Retrieving from api</em>");
+                    $('h2').html("<em>Computer says no</em>");
+                 }else{
+                    var randomColor = getRandomColor();
+                    $('body').css({ 'background': randomColor, 'color' : randomColor });
+                    $('.magicButton').css('background-color', randomColor);
+                    console.log(a[0]);
+                    $('h1').html($(a[0].content).text());
+                    $('h2').html(a[0].title);
+                    var shareText = encodeURIComponent('"'+$(a[0].content).text()+'" '+a[0].title+' '+a[0].link+' (via @plodtv)');
+                    $("#tweet").click(function() {
+                        window.open("https://twitter.com/share?text="+shareText);
+                    });
+                 }
+                $('section').fadeIn();
+             });
+        }
+        $( document ).ready(function() {
+            $('section').hide();
+            getQuote();
+            $( "#newQuote" ).click(function() {
+                getQuote();
+            });
+
+ 	    });
+    </script>
+</body>
+</html>
