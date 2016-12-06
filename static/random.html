@@ -98,6 +98,7 @@
                     $('h1').html($(a[0].content).text());
                     $('h2').html(a[0].title);
                     var shareText = encodeURIComponent('"'+$(a[0].content).text()+'" '+a[0].title+' '+a[0].link+' (via @plodtv)');
+                    $("#tweet").unbind();
                     $("#tweet").click(function() {
                         window.open("https://twitter.com/share?text="+shareText);
                     });
